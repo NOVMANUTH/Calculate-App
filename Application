@@ -1,0 +1,118 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class CalculatorForm extends JFrame {
+
+    private JTextField firstNumberField;
+    private JTextField secondNumberField;
+    private JTextField resultField;
+
+    public CalculatorForm() {
+        super("Calculator");
+
+        // Initialize components
+        firstNumberField = new JTextField(10);
+        secondNumberField = new JTextField(10);
+        resultField = new JTextField(10);
+        resultField.setEditable(false);
+
+        // Layout
+        JPanel formPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        formPanel.add(new JLabel("First Number:"));
+        formPanel.add(firstNumberField);
+        formPanel.add(new JLabel("Second Number:"));
+        formPanel.add(secondNumberField);
+        formPanel.add(new JLabel("Result:"));
+        formPanel.add(resultField);
+
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 3, 5, 5));
+        String[] buttonLabels = {"+", "-", "*", "/", "%", "Clear"};
+
+        for (String label : buttonLabels) {
+            JButton btn = new JButton(label);
+            btn.addActionListener(new ButtonClickListener());
+            buttonPanel.add(btn);
+        }
+
+        // Add components to frame
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(formPanel, BorderLayout.CENTER);
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 200);
+        setLocationRelativeTo(null); // Center the frame on screen
+        setVisible(true);
+    }
+
+    private class ButtonClickListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+
+            switch (command) {
+                case "+":
+                    calculate('+');
+                    break;
+                case "-":
+                    calculate('-');
+                    break;
+                case "*":
+                    calculate('*');
+                    break;
+                case "/":
+                    calculate('/');
+                    break;
+                case "%":
+                    calculate('%');
+                    break;
+                case "Clear":
+                    clearFields();
+                    break;
+            }
+        }
+
+        private void calculate(char operator) {
+            try {
+                double num1 = Double.parseDouble(firstNumberField.getText());
+                double num2 = Double.parseDouble(secondNumberField.getText());
+                double result = 0;
+
+                switch (operator) {
+                    case '+':
+                        result = num1 + num2;
+                        break;
+                    case '-':
+                        result = num1 - num2;
+                        break;
+                    case '*':
+                        result = num1 * num2;
+                        break;
+                    case '/':
+                        result = num1 / num2;
+                        break;
+                    case '%':
+                        result = num1 % num2;
+                        break;
+                }
+
+                resultField.setText(String.valueOf(result));
+            } catch (NumberFormatException | ArithmeticException ex) {
+                JOptionPane.showMessageDialog(CalculatorForm.this,
+                        "Invalid input or operation: " + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        private void clearFields() {
+            firstNumberField.setText("");
+            secondNumberField.setText("");
+            resultField.setText("");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new CalculatorForm());
+    }
+}
